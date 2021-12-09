@@ -1,0 +1,23 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+{% block title %}
+{{ flatpage.title }}
+{% endblock %}
+{% block content %}
+<section id="banner">
+									<div class="content">
+										<header>
+											<h1>Наш цех</h1>
+											<p>Филигранно</p>
+										</header>
+										<p>{{ flatpage.content }}</p>
+										<ul class="actions">
+											<li><a href="#" class="button big">Наша команда</a></li>
+										</ul>
+									</div>
+									<span class="image object">
+										<img src="{% static 'movies/images/unnamed.jpg' %}" alt="" />
+									</span>
+								</section>
+
+{% endblock %}

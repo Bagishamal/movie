@@ -1,0 +1,197 @@
+{% load static recaptcha3 %}
+{% load movie_tags %}
+{% load contact_tag %}
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>{% block title %} {%endblock%}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'movies/css/bootstrap.css' %}" />
+		<link rel="stylesheet" href="{% static 'movies/css/main.css' %}" />
+		<link rel="stylesheet" href="{% static 'movies/css/formychanges.css' %}">
+		{% recaptcha_init %}
+		{% recaptcha_ready action_name='homepage' %}
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+							{% include 'include/header.html' %}
+
+							<!-1- Banner -->
+							{% block detail %}
+							{% endblock %}
+
+
+
+							{% block content %}
+							{% endblock %}
+<!--							<h4>Pagination</h4>-->
+													<ul class="pagination">
+
+														<li>
+														{% if paginator.page_range|length > 1 %}
+															{% if page_obj.has_previous %}
+															<span class="button">
+																<a href="?page={{page_obj.previous_page_number}}">Prev</a>
+															</span></li>
+															{% else %}
+															<span class="button disabled">
+																Prev
+															</span></li>
+															{% endif %}
+
+															{% for p in paginator.page_range %}
+																{% if page_obj.number == p %}
+																<li><a href="?q={{q}}&page={{p}}" class="page active" >{{p}}</a></li>
+																{% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2%}
+																<li><a href="?q={{q}}&page={{p}}" class="page" >{{p}}</a></li>
+																{% endif %}
+															{% endfor %}
+																{% if page_obj.has_next %}
+																<li><a href="?page={{page_obj.next_page_number}}" class="button">Next</a></li>
+																{% else %}
+																<li><a class="button disabled">Next</a></li>
+																{% endif %}
+														{% endif %}
+													</ul>
+						</div>
+					</div>
+
+
+
+
+				<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Search -->
+								<section id="search" class="alt">
+									<form action="{% url 'search' %}" method="GET" >
+										{% csrf_token %}
+										<input type="text" name="q" placeholder="Поиск фильма" />
+										<br>
+										<button type="submit" class="button">Найти</button>
+									</form>
+								</section>
+
+							<!-- Menu -->
+
+							<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+								{% category_name as cats %}
+									<ul>
+										{% if user.is_authenticated %}
+											<li><a href="{% url 'account_logout' %}">Выйти</a></li>
+										{% else %}
+											<li><a href="{% url 'account_login' %}">Войти</a></li>
+											<li><a href="{% url 'account_signup' %}">Регистрация</a></li>
+										{% endif %}
+										
+										<li><a href="{% url 'main' %}">Главная</a></li>
+										<li>
+											<span class="opener">Категории</span>
+											<ul>
+
+												{% for c in cats %}
+												<li><a href="#">{{c.Name}}</a></li>
+												{% endfor %}
+
+											</ul>
+										</li>
+
+										<li><a href="/about/">О портале</a></li>
+									</ul>
+								</nav>
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Последние добавленные</h2>
+									</header>
+									<div class="mini-posts">
+										{% last_changes 1 as last %}
+										<article>
+											{% for l in last %}
+											<a href="#" class="image"><img src="{{l.Poster.url}}" alt="" ></a>
+											<p>{{l.Title }}</p>
+											{% endfor %}
+										</article>
+										<form action="{% url 'filter' %}" method="GET">
+										<article>
+											<h3> Жанры: </h3>
+											{% for genre in view.get_genre %}
+											<div class="form-check">
+										  <input class="form-check-input" type="checkbox" value="{{genre.id}}" id="{{genre.id}}" name="Genre">
+										  <label class="form-check-label" for="{{genre.id}}">
+											  {{ genre.Name }}
+										  </label>
+
+											</div>
+											{% endfor %}
+
+
+
+
+										</article>
+
+
+
+										<article>
+										<h3> Годы: </h3>
+											{% for year in view.get_year %}
+										<div class="form-check">
+										  <input class="form-check-input" type="checkbox" value="{{year.Year| date:'Y'}}" id="{{year.Year| date:'Y'}}" name="Year">
+										  <label class="form-check-label" for="{{year.Year| date:'Y'}}">
+											  {{ year.Year | date:"Y"}}
+										  </label>
+										</div>
+											{% endfor %}
+											<button type="submit" class="button">Найти</button>
+											</article>
+										</form>
+											</div>
+
+								</section>
+
+							<!-- Section -->
+								<section>
+
+									<header class="major">
+										<h2>Подпишитесь на рассылку</h2>
+									</header>
+								{% contact_form %}
+									<hr>
+									<header class="major">
+										<h2>Наши контакты</h2>
+									</header>
+									<ul class="contact">
+										<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
+										<li class="icon solid fa-phone">(000) 000-0000</li>
+										<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
+										Nashville, TN 00000-0000</li>
+									</ul>
+								</section>
+
+{% include 'include/footer.html' %}
+						</div>
+					</div>
+
+			</div>
+
+			<script src="{% static 'movies/js/jquery.min.js' %}"></script>
+			<script src="{% static 'movies/js/browser.min.js' %}"></script>
+			<script src="{% static 'movies/js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'movies/js/util.js' %}"></script>
+			<script src="{% static 'movies/js/main.js' %}"></script>
+	</body>
+</html>

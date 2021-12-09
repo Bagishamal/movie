@@ -1,0 +1,25 @@
+{% extends 'movies/base.html' %}
+{% block title %} Видеотека {% endblock %}
+{% block content %}
+							<!-- Section -->
+								<section>
+
+									<header class="major">
+										<h2>Какой нибудь жанр</h2>
+									</header>
+									<div class="posts">
+										{% for m in movies_list %}
+										<article>
+											<a href="#" class="image"><img src="{{ m.Poster.url }}" alt="" /></a>
+											<h3>{{ m.Title }}</h3>
+											<p>{{ m.Description | safe}}</p>
+											<ul class="actions">
+												<li><a href="{{ m.get_absolute_url  }}" class="button">Подробнее</a></li>
+											</ul>
+
+										</article>
+										{% endfor %}
+
+									</div>
+								</section>
+					{% endblock %}

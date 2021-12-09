@@ -1,0 +1,43 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+{% block title %} Actors {% endblock %}
+{% block content %}
+		                        <section id="banner">
+									<div class="major">
+
+
+										<br> <br> <br>
+										<header>
+											<h1>{{actor.Name}}</h1>
+											<p>Возраст: {{actor.Age}} лет</p>
+										</header>
+											<p>{{actor.Description | safe}}</p>
+											<img class="rounded float-start" src="{{actor.Image.url}}">
+										<h2><b>Фильмография:</b></h2>
+										<ul>
+											{% for film in actor.movie_set.all %}
+											<li> {{ film.Title }} </li>
+											{% endfor %}
+										</ul>
+
+
+<!--										</div></li>-->
+<!--										</ul>-->
+
+<!--										<ul class="actions">-->
+<!--											<li><a href="#" class="button big">Перейти к обсуждению</a></li>-->
+<!--									</span>-->
+<!--										</ul>-->
+
+
+
+
+
+									</div>
+<!--									<span class="image object">-->
+<!--										<img src="{{movies_detail.Poster.url}}" alt="" />-->
+<!--									</span>-->
+
+								</section>
+
+{% endblock %}

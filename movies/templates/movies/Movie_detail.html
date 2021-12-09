@@ -1,0 +1,117 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+
+{% block title %} {{movies_detail.Title}} {% endblock %}
+{% block content %}
+		                        <section id="banner">
+									<div class="major">
+										<header>
+											<h1>{{movies_detail.Title}}</h1>
+											<p>{{movies_detail.Tagline}}</p>
+										</header>
+										<p>{{movies_detail.Description | safe}}</p>
+
+										<ul class="descript">
+											<li>Год: {{movies_detail.Year}}</li>
+											<li>Страна: {{movies_detail.Country}}</li>
+											<li>Режиссер:
+												{% for director in movies_detail.Director.all %}
+												<a href="{{ director.get_absolute_url }}">{{director.Name}}</a>
+
+												{% endfor %}
+											</li>
+											<li>Актеры:
+												{% for actor in movies_detail.Actors.all %}
+												<a href="{{ actor.get_absolute_url  }}">{{actor.Name}}</a>
+												{% endfor %}
+											</li>
+											<li>Жанр:
+											{% for genre in movies_detail.Genre.all %}
+													{{genre.Name}}
+												{% endfor %}
+											</li>
+											<li>Премьера в мире: {{movies_detail.World_premier}}</li>
+											<li>Бюджет: ${{movies_detail.Budjet}} долларов сша</li>
+											<li>Сборы в США: ${{movies_detail.Fees_in_Usa}}</li>
+											<li>Сборы в мире: ${{movies_detail.Fees_in_world}}</li>
+											<li>Категория: {{movies_detail.Category}}</li><br>
+											<li><div>
+										<p>Кадры из фильма: </p>
+											{% for image in movies_detail.frameofmovies_set.all %}
+											<img style="{border-radius:25px;}" src="{{image.Image.url}}" width="150" height="90">
+											{% endfor %}
+										</div></li>
+											<li>
+											<form method="post" action="{% url 'add_rating' %}" name="rating">
+												<b>Рейтинг:</b>
+												{% csrf_token %}
+												<input type="hidden" value="{{movies_detail.id}}" name="movie">
+												<span class="rating">
+													{% for k,v in RatingForm.fields.Stars.choices %}
+													<input type="radio" id="rating{{ v }}" name="star" value ="{{v}}">
+													<label for="rating{{ v }}" >{{ k }}</label>
+													{% endfor %}
+												</span>
+
+<!--												{{star_form.fields}}-->
+											</form>
+											</li>
+										</ul>
+
+										<ul class="actions">
+											<li><a href="#" class="button big">Перейти к обсуждению</a></li>
+									</span>
+										</ul>
+
+										<div>
+								<form action="{% url 'create_review' movies_detail.pk %}" method="POST" id="formview">
+                                 {% csrf_token %}
+									<input type="hidden" name = "Parent" id="contactparent" value="">
+                                 <div class="input-group">
+                                    <label class="form-label" for="Name">Имя</label>
+                                    <input type="text" class="form-control" id="Name" name="Name" required placeholder = "Your name"></input>
+                                 </div>
+                                 <div class="input-group">
+                                    <label class="form-label"   for="Email">Email</label>
+                                    <input type="email" class="form-control" id="Email" name="Email" required placeholder = "Text email"></input>
+                                 </div>
+                                 <div class="input-group">
+                                    <label class="form-label" for="Text" required placeholder = "...">Ваш комментарий</label>
+                                    <textarea class="form-control"  name="Text" id="Text" rows="5"></textarea>
+                                 </div>
+                                    <div>
+                                       <button class="btn">Отправить</button>
+                                    </div>
+                                 </form>
+							</div>
+										<div><p>Количество отзывов: {{ movies_detail.reviews_set.count }}</p></div>
+                           <div>
+
+									<div>
+
+										<ul style="list-decoration: none">
+											{% for review in movies_detail.get_review %}
+											<img src="{% static 'movies/images/pic01.jpg' %}" width="24" height="24">
+											<li>Имя: {{review.Name}}</li>
+											<li>Отзыв: {{review.Text}}</li>
+											<a href="#formview" onclick="AddReview('{{review.Name}}','{{review.id}}')">Ответить</a>
+											{% endfor %}
+										</ul>
+									</div>
+										</div>
+
+
+									</div>
+									<span class="image object">
+										<img src="{{movies_detail.Poster.url}}" alt="" />
+									</span>
+
+								</section>
+<script>
+function AddReview(name, id){
+document.getElementById("contactparent").value = id
+document.getElementById("Text").innerText = `${name}, `
+}
+</script>
+{% endblock %}
